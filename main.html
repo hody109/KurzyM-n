@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Kurzovní lístek</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h3 {
+            text-align: center;
+            color: #0078D4;
+        }
+        table {
+            margin: auto;
+            width: 80%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            background-color: #FFF;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+        }
+        th {
+            background-color: #0078D4;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        a {
+            color: #0078D4;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="kl"></div>
+
+    <script>
+    //uni vykresleni sablony
+    function js_render(t,d){
+        return t.replace(/\n/g,"~").replace(/\{([^\:\}]+)\}|\{ds\:(\w+)\}(.*?)\{\/ds\}/g,function(a,n,s,ts){
+            h='';
+            try{
+                if(n) return d[n];
+                ds=d[s];
+                for(c in ds){
+                    if(ds.hasOwnProperty(c)) h+=js_render(ts,ds[c])
+                }
+            }catch(e){}
+            return h
+        }).replace(/~/g,'\n')
+    };
+
+    //priprava sablony pro zobrazeni
+    function vypiskurzy(data){
+        t = '<h3>Kurzy <a href="{url}">{banka}</a></h3><table><tr><th>Měna</th><th>Jednotka</th><th>Kurz</th></tr>';
+        t += '{ds:kurzy}<tr><td><a href="{url}">{nazev}</a></td><td align="right">{jednotka}</td><td align="right">{dev_stred}</td></tr>{/ds}';
+        t += '</table>';
+
+        html = js_render(t,data);
+        document.getElementById("kl").innerHTML = html;
+    }
+    </script>
+    <script async="1" src="https://data.kurzy.cz/json/meny/b[6]cb[vypiskurzy].js"></script>
+</body>
+</html>
